@@ -1,3 +1,3 @@
-import { Expression } from './expression'
+import { Expression } from '../implements/expression'
 
-export interface Filter extends Expression {}
+export interface IFilter extends Expression {}
