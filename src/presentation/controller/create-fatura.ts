@@ -18,6 +18,9 @@ export class CreateFaturaController implements Controller {
           return badRequest(new MissingParamError(field))
         }
       }
+      if (typeof httpRequest.body.id_processo !== 'number') {
+        return badRequest(new Error('id_processo must be a number'))
+      }
       this.creator.create(httpRequest.body.id_processo)
       return ok('teste')
     } catch (err) {
