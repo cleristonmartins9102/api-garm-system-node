@@ -1,6 +1,6 @@
 import { MissingParamError } from '../error/missing-param-error'
 import { ServerError } from '../error/server-error'
-import { badRequest, serverError } from '../helper/http-helper'
+import { badRequest, ok, serverError } from '../helper/http-helper'
 import { Controller } from '../protocols/contoller'
 import { HttpRequest } from '../protocols/https'
 import { CreateFaturaController } from './create-fatura'
@@ -27,7 +27,7 @@ const makeSut = (): any => {
 const makeFakeFacade = (): any => {
   class FacadeCreateFaturaStub implements CreateFatura {
     create (): any {
-      throw new Error()
+      return ok('success')
     }
   }
   return new FacadeCreateFaturaStub()
@@ -42,6 +42,17 @@ describe('Test Create Fatura', () => {
     }
     const response = sut.handle(httpRequest)
     expect(response).toEqual(badRequest(new MissingParamError('id_processo')))
+  })
+
+  test('Should ensure return 400 if param id_processo is not a number', () => {
+    const { sut } = makeSut()
+    const httpRequest: HttpRequest = {
+      body: {
+        id_processo: ('any_value' as any)
+      }
+    }
+    const response = sut.handle(httpRequest)
+    expect(response).toEqual(badRequest(new Error('id_processo must be a number')))
   })
 
   test('Should ensure return 500 if FacadeFatura returns error', () => {
