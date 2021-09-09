@@ -23,4 +23,11 @@ describe('Required Field', () => {
     const error = sut.validate(makeBodyFake())
     expect(error).toEqual(new MissingParamError('name'))
   })
+
+  test('Should ensure RequiredField returns null on success', () => {
+    const isObjectType = new IsObjectType()
+    const sut = new RequiredField('email', [isObjectType])
+    const error = sut.validate(makeBodyFake())
+    expect(error).toBeNull()
+  })
 })
