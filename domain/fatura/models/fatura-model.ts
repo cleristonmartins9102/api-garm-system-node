@@ -1,4 +1,4 @@
-export type FaturaTypes = {
-  id_fatura?: number
-  numero?: number
+export type FaturaModel = {
+  id_fatura: number
+  numero: number
 }
