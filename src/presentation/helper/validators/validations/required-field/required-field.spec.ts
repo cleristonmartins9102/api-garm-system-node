@@ -16,4 +16,11 @@ describe('Required Field', () => {
     sut.validate(makeBodyFake())
     expect(isObjectTypeSpy).toBeCalledWith(makeBodyFake())
   })
+
+  test('Should ensure RequiredField returns error', () => {
+    const isObjectType = new IsObjectType()
+    const sut = new RequiredField('name', [isObjectType])
+    const error = sut.validate(makeBodyFake())
+    expect(error).toEqual(new MissingParamError('name'))
+  })
 })
