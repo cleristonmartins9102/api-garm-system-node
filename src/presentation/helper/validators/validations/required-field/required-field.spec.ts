@@ -18,8 +18,7 @@ describe('Required Field', () => {
   })
 
   test('Should ensure RequiredField returns error', () => {
-    const isOfType = new IsOfType('object')
-    const sut = new RequiredField('name', [isOfType])
+    const sut = new RequiredField('name')
     const error = sut.validate(makeBodyFake())
     expect(error).toEqual(new MissingParamError('name'))
   })

@@ -9,7 +9,7 @@ describe('IsObjectType Validator', () => {
     expect(error).toEqual(new InvalidTypeError())
   })
 
-  test('Should ensure return null if is valid value', () => {
+  test('Should ensure returns null if is a valid value', () => {
     const dataFake = { key: 'any_value' }
     const sut = new IsOfType('object')
     const error = sut.validate(dataFake)
