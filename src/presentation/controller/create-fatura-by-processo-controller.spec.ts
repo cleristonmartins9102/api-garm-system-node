@@ -2,8 +2,8 @@ import { badRequest, ok, serverError } from '../helper/http-helper'
 import { Controller } from '../protocols/contoller'
 import { HttpRequest } from '../protocols/https'
 import { CreateFaturaByProcessoController } from './create-fatura-by-processo-controller'
-import { CreateFatura } from '../../../domain/fatura/CreateFatura'
-import { FaturaModel } from '../../../domain/fatura/models/fatura-model'
+import { CreateInvoice } from '../../../domain/fatura/create-invoice'
+import { InvoiceModel } from '../../../domain/fatura/models/invoice-model'
 import { RequiredField } from '../helper/validators/validations/required-field/required-field'
 import { ValidationComposite } from '../helper/validators/validation-composite'
 import { Validation } from '../protocols/validation'
@@ -11,7 +11,7 @@ import { InvalidParamError } from '../../../../../../Courses/node/src/presentati
 
 type SutTypes = {
   sut: Controller
-  facadeStub: CreateFatura
+  facadeStub: CreateInvoice
 }
 
 const makeValidation = (field: string): any => {
@@ -38,14 +38,14 @@ const makeSut = (): any => {
   }
 }
 
-const makeFakeFatura = (): FaturaModel => ({
+const makeFakeFatura = (): InvoiceModel => ({
   id_fatura: 1,
   numero: 1
 })
 
 const makeFakeFacade = (): any => {
-  class FacadeCreateFaturaStub implements CreateFatura {
-    async create (): Promise<FaturaModel> {
+  class FacadeCreateFaturaStub implements CreateInvoice {
+    async create (): Promise<InvoiceModel> {
       return makeFakeFatura()
     }
   }

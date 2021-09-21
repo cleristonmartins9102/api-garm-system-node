@@ -13,7 +13,7 @@ export class CreatorFaturaByProcesso implements Controller {
     this.getProcess = getProcess
   }
 
-  handle (httpRequest: HttpRequest): HttpResponse {
+  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const error = this.validator.validate(httpRequest.body)
       if (error) {
