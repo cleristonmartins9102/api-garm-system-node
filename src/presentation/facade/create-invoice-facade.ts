@@ -10,6 +10,7 @@ export class CreateInvoiceFacade implements CreateInvoice {
   }
 
   async create (id: number): Promise<InvoiceModel> {
+    this.getOperationType.get(id)
     return Promise.resolve({ id_fatura: 1, numero: 2 })
   }
 }
