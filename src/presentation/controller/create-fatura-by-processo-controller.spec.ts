@@ -90,17 +90,17 @@ describe('Test Create Fatura', () => {
     expect(sut.handle(httpRequest)).toEqual(badRequest(new InvalidParamError('id_processo')))
   })
 
-  // test('Should ensure CreatorFaturaByProcesso returns 400 if Validator throws', () => {
-  //   const { sut, validation } = makeSut()
-  //   const fakeData = { id_processo: 2 }
-  //   const httpRequest: HttpRequest = {
-  //     body: fakeData
-  //   }
-  //   jest.spyOn(validation, 'validate').mockImplementationOnce(() => {
-  //     throw new Error()
-  //   })
-  //   expect(sut.handle(httpRequest)).toEqual(serverError())
-  // })
+  test('Should ensure CreatorFaturaByProcesso returns 400 if Validator throws', () => {
+    const { sut, validation } = makeSut()
+    const fakeData = { id_processo: 2 }
+    const httpRequest: HttpRequest = {
+      body: fakeData
+    }
+    jest.spyOn(validation, 'validate').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    expect(sut.handle(httpRequest)).toEqual(serverError())
+  })
 
   test('Should ensure return 500 if FacadeFatura throw', () => {
     const { sut, facadeStub } = makeSut()
