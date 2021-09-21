@@ -9,6 +9,7 @@ import { FaturaModel } from '../../../domain/fatura/models/fatura-model'
 import { RequiredField } from '../helper/validators/validations/required-field/required-field'
 import { ValidationComposite } from '../helper/validators/validation-composite'
 import { Validation } from '../protocols/validation'
+import { InvalidParamError } from '../../../../../../Courses/node/src/presentation/erros/invalid-param-error'
 
 type CreateFaturaRequestType = {
   id_processo?: number
@@ -29,17 +30,17 @@ const makeValidator = (validation: Validation[]): Validation => {
   return validator
 }
 
-const validation = [
-  makeValidation('id_processo')
-]
-const validator = makeValidator(validation)
-
 const makeSut = (): any => {
+  const validation = [
+    makeValidation('id_processo')
+  ]
+  const validator = makeValidator(validation)
   const facadeStub = makeFakeFacade()
   const sut = new CreateFaturaByProcessoController(facadeStub, validator)
   return {
     sut,
-    facadeStub
+    facadeStub,
+    validation: validation[0]
   }
 }
 
@@ -75,6 +76,30 @@ describe('Test Create Fatura', () => {
   //   }
   //   const response = sut.handle(httpRequest)
   //   expect(response).toEqual(badRequest(new Error('id_processo must be a number')))
+  // })
+
+  test('Should ensure CreatorFaturaByProcesso 400 error if Validator returns error', () => {
+    const { sut, validation } = makeSut()
+    const fakeData = { id_processo: 2 }
+    const httpRequest: HttpRequest = {
+      body: fakeData
+    }
+    jest.spyOn(validation, 'validate').mockImplementationOnce(() => {
+      return new InvalidParamError('id_processo')
+    })
+    expect(sut.handle(httpRequest)).toEqual(badRequest(new InvalidParamError('id_processo')))
+  })
+
+  // test('Should ensure CreatorFaturaByProcesso returns 400 if Validator throws', () => {
+  //   const { sut, validation } = makeSut()
+  //   const fakeData = { id_processo: 2 }
+  //   const httpRequest: HttpRequest = {
+  //     body: fakeData
+  //   }
+  //   jest.spyOn(validation, 'validate').mockImplementationOnce(() => {
+  //     throw new Error()
+  //   })
+  //   expect(sut.handle(httpRequest)).toEqual(serverError())
   // })
 
   test('Should ensure return 500 if FacadeFatura throw', () => {
