@@ -57,27 +57,6 @@ const makeFakeFacade = (): any => {
 }
 
 describe('Test Create Fatura', () => {
-  // test('Should ensure return 400 if id_processo is not provided', () => {
-  //   const { sut } = makeSut()
-  //   const httpRequest: HttpRequest = {
-  //     body: {
-  //     }
-  //   }
-  //   const response = sut.handle(httpRequest)
-  //   expect(response).toEqual(badRequest(new MissingParamError('id_processo')))
-  // })
-
-  // test('Should ensure return 400 if param id_processo is not a number', () => {
-  //   const { sut } = makeSut()
-  //   const httpRequest: HttpRequest = {
-  //     body: {
-  //       id_processo: ('any_value' as any)
-  //     }
-  //   }
-  //   const response = sut.handle(httpRequest)
-  //   expect(response).toEqual(badRequest(new Error('id_processo must be a number')))
-  // })
-
   test('Should ensure CreatorFaturaByProcesso 400 error if Validator returns error', () => {
     const { sut, validation } = makeSut()
     const fakeData = { id_processo: 2 }
@@ -100,21 +79,6 @@ describe('Test Create Fatura', () => {
       throw new Error()
     })
     expect(sut.handle(httpRequest)).toEqual(serverError())
-  })
-
-  test('Should ensure return 500 if FacadeFatura throw', () => {
-    const { sut, facadeStub } = makeSut()
-    const error = new Error('facade_error')
-    const httpRequest: HttpRequest = {
-      body: {
-        id_processo: 1
-      }
-    }
-    jest.spyOn(facadeStub, 'create').mockImplementationOnce(() => {
-      throw error
-    })
-    const response = sut.handle(httpRequest)
-    expect(response).toEqual(serverError(error))
   })
 
   test('Should ensure return 500 if FacadeFatura throw', () => {
