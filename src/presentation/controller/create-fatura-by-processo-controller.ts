@@ -1,10 +1,11 @@
 import { CreateFatura } from '../../../domain/fatura/CreateFatura'
+import { FaturaModel } from '../../../domain/fatura/models/fatura-model'
 import { MissingParamError } from '../error/missing-param-error'
 import { badRequest, ok, serverError } from '../helper/http-helper'
 import { Controller } from '../protocols/contoller'
 import { HttpRequest, HttpResponse } from '../protocols/https'
 
-export class CreateFaturaController implements Controller {
+export class CreateFaturaByProcessoController implements Controller {
   private readonly creator: CreateFatura
   constructor (creator: CreateFatura) {
     this.creator = creator
@@ -21,8 +22,9 @@ export class CreateFaturaController implements Controller {
       if (typeof httpRequest.body.id_processo !== 'number') {
         return badRequest(new Error('id_processo must be a number'))
       }
-      this.creator.create(httpRequest.body.id_processo)
-      return ok('teste')
+
+      const response: FaturaModel = this.creator.create(httpRequest.body.id_processo)
+      return ok(response)
     } catch (err) {
       return serverError(err)
     }

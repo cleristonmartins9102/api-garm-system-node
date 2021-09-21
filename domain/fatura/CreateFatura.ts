@@ -1,3 +1,3 @@
 export interface CreateFatura {
-  create (processoNumber: number): any
+  create (number: number): any
 }

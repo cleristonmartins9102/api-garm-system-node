@@ -3,8 +3,9 @@ import { ServerError } from '../error/server-error'
 import { badRequest, ok, serverError } from '../helper/http-helper'
 import { Controller } from '../protocols/contoller'
 import { HttpRequest } from '../protocols/https'
-import { CreateFaturaController } from './create-fatura'
+import { CreateFaturaByProcessoController } from './create-fatura-by-processo-controller'
 import { CreateFatura } from '../../../domain/fatura/CreateFatura'
+import { FaturaModel } from '../../../domain/fatura/models/fatura-model'
 
 type CreateFaturaRequestType = {
   id_processo?: number
@@ -17,7 +18,7 @@ type SutTypes = {
 
 const makeSut = (): any => {
   const facadeStub = makeFakeFacade()
-  const sut = new CreateFaturaController(facadeStub)
+  const sut = new CreateFaturaByProcessoController(facadeStub)
   return {
     sut,
     facadeStub
@@ -26,8 +27,11 @@ const makeSut = (): any => {
 
 const makeFakeFacade = (): any => {
   class FacadeCreateFaturaStub implements CreateFatura {
-    create (): any {
-      return ok('success')
+    create (): FaturaModel {
+      return {
+        id_fatura: 1,
+        numero: 2
+      }
     }
   }
   return new FacadeCreateFaturaStub()
@@ -55,7 +59,22 @@ describe('Test Create Fatura', () => {
     expect(response).toEqual(badRequest(new Error('id_processo must be a number')))
   })
 
-  test('Should ensure return 500 if FacadeFatura returns error', () => {
+  test('Should ensure return 500 if FacadeFatura throw', () => {
+    const { sut, facadeStub } = makeSut()
+    const error = new Error('facade_error')
+    const httpRequest: HttpRequest = {
+      body: {
+        id_processo: 1
+      }
+    }
+    jest.spyOn(facadeStub, 'create').mockImplementationOnce(() => {
+      throw error
+    })
+    const response = sut.handle(httpRequest)
+    expect(response).toEqual(serverError(error))
+  })
+
+  test('Should ensure return 500 if FacadeFatura throw', () => {
     const { sut, facadeStub } = makeSut()
     const error = new Error('facade_error')
     const httpRequest: HttpRequest = {

@@ -1,5 +1,5 @@
 import { MissingParamError } from '../../../../error/missing-param-error'
-import { IsObjectType } from '../is-object-type/is-object-type'
+import { IsOfType } from '../is-object-type/is-of-type'
 import { RequiredField } from './required-field'
 
 const makeBodyFake = (): any => (
@@ -10,23 +10,23 @@ const makeBodyFake = (): any => (
 
 describe('Required Field', () => {
   test('Should ensure validator IsObjectType call with correct value', () => {
-    const isObjectType = new IsObjectType()
-    const isObjectTypeSpy = jest.spyOn(isObjectType, 'validate')
-    const sut = new RequiredField('email', [isObjectType])
+    const isOfType = new IsOfType('object')
+    const isOfTypeSpy = jest.spyOn(isOfType, 'validate')
+    const sut = new RequiredField('email', [isOfType])
     sut.validate(makeBodyFake())
-    expect(isObjectTypeSpy).toBeCalledWith(makeBodyFake())
+    expect(isOfTypeSpy).toBeCalledWith(makeBodyFake())
   })
 
   test('Should ensure RequiredField returns error', () => {
-    const isObjectType = new IsObjectType()
-    const sut = new RequiredField('name', [isObjectType])
+    const isOfType = new IsOfType('object')
+    const sut = new RequiredField('name', [isOfType])
     const error = sut.validate(makeBodyFake())
     expect(error).toEqual(new MissingParamError('name'))
   })
 
   test('Should ensure RequiredField returns null on success', () => {
-    const isObjectType = new IsObjectType()
-    const sut = new RequiredField('email', [isObjectType])
+    const isOfType = new IsOfType('object')
+    const sut = new RequiredField('email', [isOfType])
     const error = sut.validate(makeBodyFake())
     expect(error).toBeNull()
   })
