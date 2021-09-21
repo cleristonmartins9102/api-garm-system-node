@@ -7,11 +7,11 @@ import { HttpRequest, HttpResponse } from '../protocols/https'
 import { Validation } from '../protocols/validation'
 
 export class CreateFaturaByProcessoController implements Controller {
-  private readonly creator: CreateFatura
+  private readonly creatorFatura: CreateFatura
   private readonly validator: Validation
 
-  constructor (creator: CreateFatura, validator: Validation) {
-    this.creator = creator
+  constructor (creatorFatura: CreateFatura, validator: Validation) {
+    this.creatorFatura = creatorFatura
     this.validator = validator
   }
 
@@ -22,7 +22,7 @@ export class CreateFaturaByProcessoController implements Controller {
         return badRequest(error)
       }
 
-      const response: FaturaModel = this.creator.create(httpRequest.body.id_processo)
+      const response: FaturaModel = this.creatorFatura.create(httpRequest.body.id_processo)
       return ok(response)
     } catch (err) {
       return serverError(err)

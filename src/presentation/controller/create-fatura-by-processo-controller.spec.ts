@@ -1,5 +1,3 @@
-import { MissingParamError } from '../error/missing-param-error'
-import { ServerError } from '../error/server-error'
 import { badRequest, ok, serverError } from '../helper/http-helper'
 import { Controller } from '../protocols/contoller'
 import { HttpRequest } from '../protocols/https'
@@ -10,10 +8,6 @@ import { RequiredField } from '../helper/validators/validations/required-field/r
 import { ValidationComposite } from '../helper/validators/validation-composite'
 import { Validation } from '../protocols/validation'
 import { InvalidParamError } from '../../../../../../Courses/node/src/presentation/erros/invalid-param-error'
-
-type CreateFaturaRequestType = {
-  id_processo?: number
-}
 
 type SutTypes = {
   sut: Controller
@@ -44,55 +38,58 @@ const makeSut = (): any => {
   }
 }
 
+const makeFakeFatura = (): FaturaModel => ({
+  id_fatura: 1,
+  numero: 1
+})
+
 const makeFakeFacade = (): any => {
   class FacadeCreateFaturaStub implements CreateFatura {
     create (): FaturaModel {
-      return {
-        id_fatura: 1,
-        numero: 2
-      }
+      return makeFakeFatura()
     }
   }
   return new FacadeCreateFaturaStub()
 }
 
+const makeFakeHttpRequest = (): HttpRequest => (
+  {
+    body: {
+      id_processo: 1
+    }
+  }
+)
+
 describe('Test Create Fatura', () => {
   test('Should ensure CreatorFaturaByProcesso 400 error if Validator returns error', () => {
     const { sut, validation } = makeSut()
-    const fakeData = { id_processo: 2 }
-    const httpRequest: HttpRequest = {
-      body: fakeData
-    }
     jest.spyOn(validation, 'validate').mockImplementationOnce(() => {
       return new InvalidParamError('id_processo')
     })
-    expect(sut.handle(httpRequest)).toEqual(badRequest(new InvalidParamError('id_processo')))
+    expect(sut.handle(makeFakeHttpRequest())).toEqual(badRequest(new InvalidParamError('id_processo')))
   })
 
   test('Should ensure CreatorFaturaByProcesso returns 400 if Validator throws', () => {
     const { sut, validation } = makeSut()
-    const fakeData = { id_processo: 2 }
-    const httpRequest: HttpRequest = {
-      body: fakeData
-    }
     jest.spyOn(validation, 'validate').mockImplementationOnce(() => {
       throw new Error()
     })
-    expect(sut.handle(httpRequest)).toEqual(serverError())
+    expect(sut.handle(makeFakeHttpRequest())).toEqual(serverError())
   })
 
   test('Should ensure return 500 if FacadeFatura throw', () => {
     const { sut, facadeStub } = makeSut()
     const error = new Error('facade_error')
-    const httpRequest: HttpRequest = {
-      body: {
-        id_processo: 1
-      }
-    }
     jest.spyOn(facadeStub, 'create').mockImplementationOnce(() => {
       throw error
     })
-    const response = sut.handle(httpRequest)
+    const response = sut.handle(makeFakeHttpRequest())
     expect(response).toEqual(serverError(error))
+  })
+
+  test('Should ensure return 200 on success', () => {
+    const { sut } = makeSut()
+    const response = sut.handle(makeFakeHttpRequest())
+    expect(response).toEqual(ok(makeFakeFatura()))
   })
 })
