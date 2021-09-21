@@ -15,14 +15,14 @@ export class CreateFaturaByProcessoController implements Controller {
     this.validator = validator
   }
 
-  handle (httpRequest: HttpRequest): HttpResponse {
+  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const error = this.validator.validate(httpRequest.body)
       if (error) {
         return badRequest(error)
       }
 
-      const response: FaturaModel = this.creatorFatura.create(httpRequest.body.id_processo)
+      const response: FaturaModel = await this.creatorFatura.create(httpRequest.body.id_processo)
       return ok(response)
     } catch (err) {
       return serverError(err)

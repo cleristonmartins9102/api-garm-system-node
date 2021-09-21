@@ -45,7 +45,7 @@ const makeFakeFatura = (): FaturaModel => ({
 
 const makeFakeFacade = (): any => {
   class FacadeCreateFaturaStub implements CreateFatura {
-    create (): FaturaModel {
+    async create (): Promise<FaturaModel> {
       return makeFakeFatura()
     }
   }
@@ -61,35 +61,37 @@ const makeFakeHttpRequest = (): HttpRequest => (
 )
 
 describe('Test Create Fatura', () => {
-  test('Should ensure CreatorFaturaByProcesso 400 error if Validator returns error', () => {
+  test('Should ensure CreatorFaturaByProcesso 400 error if Validator returns error', async () => {
     const { sut, validation } = makeSut()
     jest.spyOn(validation, 'validate').mockImplementationOnce(() => {
       return new InvalidParamError('id_processo')
     })
-    expect(sut.handle(makeFakeHttpRequest())).toEqual(badRequest(new InvalidParamError('id_processo')))
+    const response = await sut.handle(makeFakeHttpRequest())
+    expect(response).toEqual(badRequest(new InvalidParamError('id_processo')))
   })
 
-  test('Should ensure CreatorFaturaByProcesso returns 400 if Validator throws', () => {
+  test('Should ensure CreatorFaturaByProcesso returns 400 if Validator throws', async () => {
     const { sut, validation } = makeSut()
     jest.spyOn(validation, 'validate').mockImplementationOnce(() => {
       throw new Error()
     })
-    expect(sut.handle(makeFakeHttpRequest())).toEqual(serverError())
+    const response = await sut.handle(makeFakeHttpRequest())
+    expect(response).toEqual(serverError())
   })
 
-  test('Should ensure return 500 if FacadeFatura throw', () => {
+  test('Should ensure return 500 if FacadeFatura throw', async () => {
     const { sut, facadeStub } = makeSut()
     const error = new Error('facade_error')
     jest.spyOn(facadeStub, 'create').mockImplementationOnce(() => {
       throw error
     })
-    const response = sut.handle(makeFakeHttpRequest())
+    const response = await sut.handle(makeFakeHttpRequest())
     expect(response).toEqual(serverError(error))
   })
 
-  test('Should ensure return 200 on success', () => {
+  test('Should ensure return 200 on success', async () => {
     const { sut } = makeSut()
-    const response = sut.handle(makeFakeHttpRequest())
+    const response = await sut.handle(makeFakeHttpRequest())
     expect(response).toEqual(ok(makeFakeFatura()))
   })
 })
