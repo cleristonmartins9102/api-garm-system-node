@@ -6,7 +6,6 @@ import { GetItem } from '../../../domain/get-item'
 type SutTypes = {
   sut: CreateInvoiceFacade
   getOperationType: GetOperationType
-  getItemProcess: GetItem<ProcessModel>
 }
 
 const makeGetOperationTypeStub = (): GetOperationType => {
@@ -28,13 +27,11 @@ const makeGetItemProcess = (): GetItem<ProcessModel> => {
 }
 
 const makeSut = (): SutTypes => {
-  const getItemProcess = makeGetItemProcess()
   const getOperationType = makeGetOperationTypeStub()
-  const sut = new CreateInvoiceFacade(getOperationType, getItemProcess)
+  const sut = new CreateInvoiceFacade(getOperationType)
   return {
     sut,
-    getOperationType,
-    getItemProcess
+    getOperationType
   }
 }
 
@@ -51,12 +48,5 @@ describe('Create Invoice Facade', () => {
     const getOperationTypeSpy = jest.spyOn(getOperationType, 'get')
     await sut.create(1)
     expect(getOperationTypeSpy).toHaveBeenCalledWith(1)
-  })
-
-  test('Ensure call GetItemProcess with correct value', async () => {
-    const { sut, getItemProcess } = makeSut()
-    const getItemProcessSpy = jest.spyOn(getItemProcess, 'get')
-    await sut.create(1)
-    expect(getItemProcessSpy).toHaveBeenCalledWith(1)
   })
 })
