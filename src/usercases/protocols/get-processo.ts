@@ -1,5 +1,5 @@
-import { ProcessoModel } from '../../../domain/processo/model/processo'
+import { ProcessModel } from '../../../domain/processo/model/process'
 
 export interface GetProcesso {
-  get (id: number): Promise<ProcessoModel>
+  get (id: number): Promise<ProcessModel>
 }
