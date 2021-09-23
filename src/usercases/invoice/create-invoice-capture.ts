@@ -5,16 +5,19 @@ import { AddInvoiceCaptureModel } from '../../dataprovider/model/add-invoice-cap
 import { GetProcess } from '../protocols/get-processo'
 import { RecordNotFound } from '../../presentation/error/record-not-found'
 import { GetCapture } from '../protocols/get-capture'
+import { GetProposal } from '../../../domain/propostal/get-proposal'
 
 export class CreateInvoiceCapture implements CreateInvoice {
   private readonly addInvoice: AddInvoice<AddInvoiceCaptureModel>
   private readonly getProcess: GetProcess
   private readonly getCapture: GetCapture
+  private readonly getProposal: GetProposal
 
-  constructor (addInvoice: AddInvoice<AddInvoiceCaptureModel>, getProcess: GetProcess, getCapture: GetCapture) {
+  constructor (addInvoice: AddInvoice<AddInvoiceCaptureModel>, getProcess: GetProcess, getCapture: GetCapture, getProposal: GetProposal) {
     this.addInvoice = addInvoice
     this.getProcess = getProcess
     this.getCapture = getCapture
+    this.getProposal = getProposal
   }
 
   async create (id: number): Promise<InvoiceModel> {
@@ -26,6 +29,11 @@ export class CreateInvoiceCapture implements CreateInvoice {
     const capture = await this.getCapture.get(process.id_captacao)
     if (!capture) {
       throw new RecordNotFound(`capture id:${id} not found`)
+    }
+
+    const proposal = await this.getProposal.get(capture.id_proposta)
+    if (!proposal) {
+      throw new RecordNotFound(`proposal id:${capture.id_proposta} not found`)
     }
 
     // await this.addInvoice.add(process)
