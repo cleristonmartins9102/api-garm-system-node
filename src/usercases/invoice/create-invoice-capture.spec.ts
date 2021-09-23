@@ -201,6 +201,14 @@ describe('Create Invoice Capture', () => {
     await expect(sut.create(processNumber)).rejects.toThrow()
   })
 
+  test('Ensure CreateInvoiceCapture throw if GetProposal throws', async () => {
+    const { sut, getProposal } = makeSut()
+    jest.spyOn(getProposal, 'get').mockImplementationOnce(async (id) => {
+      throw new Error()
+    })
+    await expect(sut.create(processNumber)).rejects.toThrow()
+  })
+
   test('Ensure CreateInvoiceCapture calls AddInvoiceCapture with correct value', async () => {
     const { sut, addInvoice } = makeSut()
     const addInvoiceSpy = jest.spyOn(addInvoice, 'add')
