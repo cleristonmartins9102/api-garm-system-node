@@ -48,7 +48,8 @@ const makeFakeInvoiceData = (): AddInvoiceCaptureModel => ({
 const makeFakeCaptureModel = (): CaptureModel => (
   {
     id_captacao: 2,
-    id_proposta: 333
+    id_proposta: 333,
+    id_agentecarga: 441
   }
 )
 
@@ -211,11 +212,20 @@ describe('Create Invoice Capture', () => {
 
   test('Ensure CreateInvoiceCapture throws if GetPessoaById returns null value', async () => {
     const { sut, getPessoa } = makeSut()
-    const error = new RecordNotFound(`pessoa id:${makeFakePessoaModel().id_individuo} not found`)
+    const error = new RecordNotFound(`costumer id:${makeFakePessoaModel().id_individuo} not found`)
     jest.spyOn(getPessoa, 'get').mockImplementationOnce(async (): Promise<any> => {
       return null
     })
     await expect(sut.create(processNumber)).rejects.toThrow(error)
+  })
+
+  test('Ensure call GetPessoaById for get Cargo Agent with correct value', async () => {
+    const { sut, getPessoa, getCapture } = makeSut()
+    const getPessoaSpy = jest.spyOn(getPessoa, 'get')
+    const getCaptureSpy = jest.spyOn(getCapture, 'get')
+    await sut.create(processNumber)
+    const capture = await getCaptureSpy.mock.results[0].value
+    expect(getPessoaSpy.mock.calls[1][0]).toBe(capture.id_agentecarga)
   })
 
   test('Ensure CreateInvoiceCapture throw if is error', async () => {

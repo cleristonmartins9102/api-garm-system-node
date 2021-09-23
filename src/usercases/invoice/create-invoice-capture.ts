@@ -45,9 +45,14 @@ export class CreateInvoiceCapture implements CreateInvoice {
       throw new RecordNotFound(`proposal id:${capture.id_proposta} not found`)
     }
 
-    const pessoa = await this.getPessoa.get(proposal.id_cliente)
-    if (!pessoa) {
-      throw new RecordNotFound(`pessoa id:${proposal.id_cliente} not found`)
+    const costumer = await this.getPessoa.get(proposal.id_cliente)
+    if (!costumer) {
+      throw new RecordNotFound(`costumer id:${proposal.id_cliente} not found`)
+    }
+
+    const cargoAgent = await this.getPessoa.get(capture.id_agentecarga)
+    if (!cargoAgent) {
+      throw new RecordNotFound(`cargo agente id:${proposal.id_cliente} not found`)
     }
 
     // await this.addInvoice.add(process)
