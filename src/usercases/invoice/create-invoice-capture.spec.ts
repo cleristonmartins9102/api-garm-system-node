@@ -14,6 +14,8 @@ import { GetCapture } from '../protocols/get-capture'
 import { CaptureModel } from '../../../domain/capture/model/capture'
 import { GetProposal } from '../../../domain/propostal/get-proposal'
 import { ProposalModel } from '../../../domain/propostal/model/proposal'
+import { PessoaModel } from '../../../domain/pessoa/model/pessoa-mode'
+import { GetPessoa } from '../../../domain/pessoa/get-pessoa'
 
 type SutTypes = {
   sut: CreateInvoice
@@ -23,7 +25,11 @@ type SutTypes = {
   getProcess: GetProcess
   getCapture: GetCapture
   getProposal: GetProposal
+  getPessoa: GetPessoa
 }
+
+const processNumber: number = 1
+const capture = 100
 
 const makeFakeInvoiceData = (): AddInvoiceCaptureModel => ({
   id_faturamodelo: 1,
@@ -45,6 +51,15 @@ const makeFakeCaptureModel = (): CaptureModel => (
     id_proposta: 333
   }
 )
+
+const makeFakePessoaModel = (): PessoaModel => ({
+  id_individuo: 2222,
+  id_endereco: 33444,
+  identificador: 2222,
+  apelido: 'any_nickname',
+  nome: 'any_nome',
+  tipo: 'any_type'
+})
 
 const makeFakeProposalData = (): ProposalModel => ({
   id_cliente: '333333',
@@ -74,9 +89,6 @@ const makeAddInvoiceCaptureStub = (): AddInvoice<AddInvoiceCaptureModel> => {
   return new AddInvoiceCaptureStub()
 }
 
-const processNumber: number = 1
-const capture = 100
-
 const makeGetProcessByIdStub = (): GetProcess => {
   class GetProcessById implements GetProcess {
     async get (id: number): Promise<ProcessModel> {
@@ -104,20 +116,31 @@ const makeGetProposalByIdStub = (): GetProposal => {
   return new GetProposalById()
 }
 
+const makeGetPessoaByIdStub = (): GetPessoa => {
+  class GetPessoaById implements GetPessoa<number> {
+    async get (id: number): Promise<PessoaModel> {
+      return Promise.resolve(makeFakePessoaModel())
+    }
+  }
+  return new GetPessoaById()
+}
+
 const makeSut = (): SutTypes => {
   const addInvoice = makeAddInvoiceCaptureStub()
   const getProposal = makeGetProposalByIdStub()
   const validator = makeValidator()
   const getProcess = makeGetProcessByIdStub()
   const getCapture = makeGetCaptureByIdStub()
-  const sut = new CreateInvoiceCapture(addInvoice, getProcess, getCapture, getProposal)
+  const getPessoa = makeGetPessoaByIdStub()
+  const sut = new CreateInvoiceCapture(addInvoice, getProcess, getCapture, getProposal, getPessoa)
   return {
     sut,
     addInvoice,
     getProcess,
     getCapture,
     validator,
-    getProposal
+    getProposal,
+    getPessoa
   }
 }
 
@@ -175,6 +198,15 @@ describe('Create Invoice Capture', () => {
       return null
     })
     await expect(sut.create(processNumber)).rejects.toThrow(error)
+  })
+
+  test('Ensure call GetPessoaById with correct value', async () => {
+    const { sut, getPessoa, getProposal } = makeSut()
+    const getPessoaSpy = jest.spyOn(getPessoa, 'get')
+    const getProposalSpy = jest.spyOn(getProposal, 'get')
+    await sut.create(processNumber)
+    const idCliente = await getProposalSpy.mock.results[0].value
+    expect(getPessoaSpy).toBeCalledWith(idCliente.id_cliente)
   })
 
   test('Ensure CreateInvoiceCapture throw if is error', async () => {
