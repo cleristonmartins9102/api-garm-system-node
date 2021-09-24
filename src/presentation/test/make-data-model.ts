@@ -1,4 +1,4 @@
-import { CaptureModel, PessoaModel, ProcessModel, ProposalModel } from '../../../domain/models'
+import { CaptureModel, PersonModel, ProcessModel, ProposalModel } from '../../../domain/models'
 import { AddInvoiceCaptureModel } from '../../dataprovider/model/add-invoice-capture-model'
 
 const makeFakeInvoice = (): AddInvoiceCaptureModel => ({
@@ -24,7 +24,7 @@ const makeFakeCapture = (): CaptureModel => (
   }
 )
 
-const makeFakePerson = (): PessoaModel => ({
+const makeFakePerson = (): PersonModel => ({
   id_individuo: 2222,
   id_endereco: 33444,
   identificador: 2222,

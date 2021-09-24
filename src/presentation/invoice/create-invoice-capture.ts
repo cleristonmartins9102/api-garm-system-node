@@ -4,7 +4,7 @@ import { GetProcess } from '../../usercases/protocols/get-processo'
 import { RecordNotFound } from '../error/record-not-found'
 import { GetCapture } from '../../usercases/protocols/get-capture'
 import { GetProposal } from '../../../domain/propostal/get-proposal'
-import { GetPerson } from '../../../domain/pessoa/get-pessoa'
+import { GetPerson } from '../../../domain/pessoa/get-person'
 
 export class CreateInvoiceCapture implements CreateInvoice {
   private readonly getProcess: GetProcess

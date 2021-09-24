@@ -5,14 +5,12 @@ import { CreateInvoiceCapture } from './create-invoice-capture'
 import { Validation } from '../protocols/validation'
 import { makeValidator } from '../../dataprovider/invoice/factor/addInvoice/validator'
 import { GetProcess } from '../../usercases/protocols/get-processo'
-import { ProcessModel } from '../../../domain/processo/model/process'
 import { RecordNotFound } from '../error/record-not-found'
 import { GetCapture } from '../../usercases/protocols/get-capture'
-import { CaptureModel } from '../../../domain/capture/model/capture'
+import { CaptureModel, PersonModel, ProcessModel } from '../../../domain/models'
 import { GetProposal } from '../../../domain/propostal/get-proposal'
 import { ProposalModel } from '../../../domain/propostal/model/proposal'
-import { PessoaModel } from '../../../domain/pessoa/model/pessoa-mode'
-import { GetPerson } from '../../../domain/pessoa/get-pessoa'
+import { GetPerson } from '../../../domain/pessoa/get-person'
 import { fakeModel } from '../test/make-data-model'
 
 type SutTypes = {
@@ -65,7 +63,7 @@ const makeGetProposalByIdStub = (): GetProposal => {
 
 const makeGetPersonByIdStub = (): GetPerson => {
   class GetPessoaById implements GetPerson<number> {
-    async get (id: number): Promise<PessoaModel> {
+    async get (id: number): Promise<PersonModel> {
       return Promise.resolve(fakeModel.makeFakePerson())
     }
   }

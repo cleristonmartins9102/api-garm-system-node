@@ -1,6 +1,6 @@
 import { DefaultRecords } from '../../models/default-records'
 
-export interface PessoaModel extends DefaultRecords{
+export interface PersonModel extends DefaultRecords{
   id_individuo: number
   id_endereco: number
   identificador: number
