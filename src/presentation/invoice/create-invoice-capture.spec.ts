@@ -7,11 +7,11 @@ import { makeValidator } from '../../dataprovider/invoice/factor/addInvoice/vali
 import { GetProcess } from '../../usercases/protocols/get-processo'
 import { RecordNotFound } from '../error/record-not-found'
 import { GetCapture } from '../../usercases/protocols/get-capture'
-import { CaptureModel, PersonModel, ProcessModel } from '../../../domain/models'
+import { CaptureModel, ProcessModel } from '../../../domain/models'
 import { GetProposal } from '../../../domain/propostal/get-proposal'
-import { ProposalModel } from '../../../domain/propostal/model/proposal'
 import { GetPerson } from '../../../domain/pessoa/get-person'
-import { fakeModel } from '../test/make-data-model'
+import { fakeModel } from '../test/make-model'
+import { stub } from '../test/make-stubs'
 
 type SutTypes = {
   sut: CreateInvoice
@@ -23,7 +23,6 @@ type SutTypes = {
 }
 
 const processNumber: number = 1
-const capture = 100
 
 const makeAddInvoiceCaptureStub = (): AddInvoice<AddInvoiceCaptureModel> => {
   class AddInvoiceCaptureStub implements AddInvoice<AddInvoiceCaptureModel> {
@@ -34,48 +33,12 @@ const makeAddInvoiceCaptureStub = (): AddInvoice<AddInvoiceCaptureModel> => {
   return new AddInvoiceCaptureStub()
 }
 
-const makeGetProcessByIdStub = (): GetProcess => {
-  class GetProcessById implements GetProcess {
-    async get (id: number): Promise<ProcessModel> {
-      return Promise.resolve(fakeModel.makeFakeProcess())
-    }
-  }
-  return new GetProcessById()
-}
-
-const makeGetCaptureByIdStub = (): GetCapture => {
-  class GetCaptureById implements GetCapture {
-    async get (id: number): Promise<CaptureModel> {
-      return Promise.resolve(fakeModel.makeFakeCapture())
-    }
-  }
-  return new GetCaptureById()
-}
-
-const makeGetProposalByIdStub = (): GetProposal => {
-  class GetProposalById implements GetProposal<number> {
-    async get (id: number): Promise<ProposalModel> {
-      return Promise.resolve(fakeModel.makeFakeProposal())
-    }
-  }
-  return new GetProposalById()
-}
-
-const makeGetPersonByIdStub = (): GetPerson => {
-  class GetPessoaById implements GetPerson<number> {
-    async get (id: number): Promise<PersonModel> {
-      return Promise.resolve(fakeModel.makeFakePerson())
-    }
-  }
-  return new GetPessoaById()
-}
-
 const makeSut = (): SutTypes => {
-  const getProposal = makeGetProposalByIdStub()
+  const getProposal = stub.makeGetProposalByIdStub()
   const validator = makeValidator()
-  const getProcess = makeGetProcessByIdStub()
-  const getCapture = makeGetCaptureByIdStub()
-  const getPerson = makeGetPersonByIdStub()
+  const getProcess = stub.makeGetProcessByIdStub()
+  const getCapture = stub.makeGetCaptureByIdStub()
+  const getPerson = stub.makeGetPersonByIdStub()
   const sut = new CreateInvoiceCapture(getProcess, getCapture, getProposal, getPerson)
   return {
     sut,
