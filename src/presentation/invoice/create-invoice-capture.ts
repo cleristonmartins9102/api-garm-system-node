@@ -3,8 +3,8 @@ import { InvoiceModel } from '../../../domain/fatura/models/invoice-model'
 import { GetProcess } from '../../usercases/protocols/get-processo'
 import { RecordNotFound } from '../error/record-not-found'
 import { GetCapture } from '../../usercases/protocols/get-capture'
-import { GetProposal } from '../../../domain/propostal/get-proposal'
 import { GetPerson } from '../../../domain/pessoa/get-person'
+import { GetProposal } from '../../usercases/protocols/get-proposal'
 
 export class CreateInvoiceCapture implements CreateInvoice {
   private readonly getProcess: GetProcess

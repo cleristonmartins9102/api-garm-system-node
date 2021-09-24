@@ -1,6 +1,6 @@
 import { CaptureModel, PersonModel, ProcessModel, ProposalModel } from '../../../domain/models'
 import { GetPerson } from '../../../domain/pessoa/get-person'
-import { GetProposal } from '../../../domain/propostal/get-proposal'
+import { GetProposal } from '../../usercases/protocols/get-proposal'
 import { GetCapture } from '../../usercases/protocols/get-capture'
 import { GetProcess } from '../../usercases/protocols/get-processo'
 import { fakeModel } from './make-model'

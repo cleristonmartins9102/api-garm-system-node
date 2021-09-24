@@ -8,10 +8,10 @@ import { GetProcess } from '../../usercases/protocols/get-processo'
 import { RecordNotFound } from '../error/record-not-found'
 import { GetCapture } from '../../usercases/protocols/get-capture'
 import { CaptureModel, ProcessModel } from '../../../domain/models'
-import { GetProposal } from '../../../domain/propostal/get-proposal'
 import { GetPerson } from '../../../domain/pessoa/get-person'
 import { fakeModel } from '../test/make-model'
 import { stub } from '../test/make-stubs'
+import { GetProposal } from '../../usercases/protocols/get-proposal'
 
 type SutTypes = {
   sut: CreateInvoice
