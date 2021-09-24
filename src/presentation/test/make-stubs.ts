@@ -1,8 +1,7 @@
+import { AddInvoice } from '../../../domain/fatura/add-invoice'
 import { CaptureModel, PersonModel, ProcessModel, ProposalModel } from '../../../domain/models'
-import { GetPerson } from '../../../domain/pessoa/get-person'
-import { GetProposal } from '../../usercases/protocols/get-proposal'
-import { GetCapture } from '../../usercases/protocols/get-capture'
-import { GetProcess } from '../../usercases/protocols/get-processo'
+import { AddInvoiceCaptureModel } from '../../dataprovider/model/add-invoice-capture-model'
+import { GetPerson, GetProposal, GetCapture, GetProcess } from '../../usercases/protocols'
 import { fakeModel } from './make-model'
 
 const makeGetCaptureByIdStub = (): GetCapture => {
@@ -41,9 +40,19 @@ const makeGetProcessByIdStub = (): GetProcess => {
   return new GetProcessById()
 }
 
+const makeAddInvoiceCaptureStub = (): AddInvoice<AddInvoiceCaptureModel> => {
+  class AddInvoiceCaptureStub implements AddInvoice<AddInvoiceCaptureModel> {
+    async add (param: AddInvoiceCaptureModel): Promise<number> {
+      return Promise.resolve(1)
+    }
+  }
+  return new AddInvoiceCaptureStub()
+}
+
 export const stub = {
   makeGetPersonByIdStub,
   makeGetProposalByIdStub,
   makeGetCaptureByIdStub,
-  makeGetProcessByIdStub
+  makeGetProcessByIdStub,
+  makeAddInvoiceCaptureStub
 }

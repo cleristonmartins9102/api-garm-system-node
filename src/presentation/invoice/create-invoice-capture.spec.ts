@@ -1,17 +1,13 @@
-import { AddInvoice } from '../../../domain/fatura/add-invoice'
+import { CaptureModel, ProcessModel } from '../../../domain/models'
+import { GetPerson, GetProposal, GetProcess } from '../../usercases/protocols'
 import { CreateInvoice } from '../../../domain/fatura/create-invoice'
-import { AddInvoiceCaptureModel } from '../../dataprovider/model/add-invoice-capture-model'
 import { CreateInvoiceCapture } from './create-invoice-capture'
 import { Validation } from '../protocols/validation'
 import { makeValidator } from '../../dataprovider/invoice/factor/addInvoice/validator'
-import { GetProcess } from '../../usercases/protocols/get-processo'
 import { RecordNotFound } from '../error/record-not-found'
 import { GetCapture } from '../../usercases/protocols/get-capture'
-import { CaptureModel, ProcessModel } from '../../../domain/models'
-import { GetPerson } from '../../../domain/pessoa/get-person'
 import { fakeModel } from '../test/make-model'
 import { stub } from '../test/make-stubs'
-import { GetProposal } from '../../usercases/protocols/get-proposal'
 
 type SutTypes = {
   sut: CreateInvoice
@@ -23,15 +19,6 @@ type SutTypes = {
 }
 
 const processNumber: number = 1
-
-const makeAddInvoiceCaptureStub = (): AddInvoice<AddInvoiceCaptureModel> => {
-  class AddInvoiceCaptureStub implements AddInvoice<AddInvoiceCaptureModel> {
-    async add (param: AddInvoiceCaptureModel): Promise<number> {
-      return Promise.resolve(1)
-    }
-  }
-  return new AddInvoiceCaptureStub()
-}
 
 const makeSut = (): SutTypes => {
   const getProposal = stub.makeGetProposalByIdStub()
