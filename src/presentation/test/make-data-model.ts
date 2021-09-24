@@ -1,7 +1,4 @@
-import { CaptureModel } from '../../../domain/capture/model/capture'
-import { PessoaModel } from '../../../domain/pessoa/model/pessoa-mode'
-import { ProcessModel } from '../../../domain/processo/model/process'
-import { ProposalModel } from '../../../domain/propostal/model/proposal'
+import { CaptureModel, PessoaModel, ProcessModel, ProposalModel } from '../../../domain/models'
 import { AddInvoiceCaptureModel } from '../../dataprovider/model/add-invoice-capture-model'
 
 const makeFakeInvoice = (): AddInvoiceCaptureModel => ({
