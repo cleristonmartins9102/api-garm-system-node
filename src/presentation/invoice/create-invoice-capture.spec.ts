@@ -2,9 +2,6 @@ import { AddInvoice } from '../../../domain/fatura/add-invoice'
 import { CreateInvoice } from '../../../domain/fatura/create-invoice'
 import { AddInvoiceCaptureModel } from '../../dataprovider/model/add-invoice-capture-model'
 import { CreateInvoiceCapture } from './create-invoice-capture'
-import { InvoiceItemOperationModel } from '../../dataprovider/model/invoice-item-operation-model '
-import { ValidationComposite } from '../../../../../../Courses/node/src/presentation/helpers/validations/validation-composite'
-import { RequiredField } from '../helper/validators/validations/required-field/required-field'
 import { Validation } from '../protocols/validation'
 import { makeValidator } from '../../dataprovider/invoice/factor/addInvoice/validator'
 import { GetProcess } from '../../usercases/protocols/get-processo'
@@ -16,6 +13,7 @@ import { GetProposal } from '../../../domain/propostal/get-proposal'
 import { ProposalModel } from '../../../domain/propostal/model/proposal'
 import { PessoaModel } from '../../../domain/pessoa/model/pessoa-mode'
 import { GetPerson } from '../../../domain/pessoa/get-pessoa'
+import { fakeModel } from '../test/make-data-model'
 
 type SutTypes = {
   sut: CreateInvoice
@@ -29,56 +27,6 @@ type SutTypes = {
 const processNumber: number = 1
 const capture = 100
 
-const makeFakeInvoiceData = (): AddInvoiceCaptureModel => ({
-  id_faturamodelo: 1,
-  id_faturastatus: 1,
-  id_processo: 1,
-  id_cliente: 1,
-  id_agentecarga: 2,
-  valor: 100,
-  valor_custo: 150,
-  valor_lucro: 200,
-  valor_imposto_interno: 233,
-  dta_emissao: '28/12/2020',
-  dta_vencimento: '30/12/2020',
-  nf: 3333
-})
-const makeFakeCaptureModel = (): CaptureModel => (
-  {
-    id_captacao: 2,
-    id_proposta: 333,
-    id_agentecarga: 441
-  }
-)
-
-const makeFakePersonModel = (): PessoaModel => ({
-  id_individuo: 2222,
-  id_endereco: 33444,
-  identificador: 2222,
-  apelido: 'any_nickname',
-  nome: 'any_nome',
-  tipo: 'any_type'
-})
-
-const makeFakeProposalData = (): ProposalModel => ({
-  id_cliente: '2222',
-  id_coadjuvante: 22222,
-  id_qualificacao: 4444,
-  id_regime: 3333,
-  id_vendedor: 545555,
-  numero: 10,
-  dta_emissao: '29/12/2020',
-  dta_validade: '30/01/2021',
-  prazo_pagamento: 20,
-  status: 3,
-  classificacao: 'modelo'
-})
-
-const makeFakeProcessData = (): ProcessModel => ({
-  id_processo: 1,
-  id_captacao: 2
-})
-
 const makeAddInvoiceCaptureStub = (): AddInvoice<AddInvoiceCaptureModel> => {
   class AddInvoiceCaptureStub implements AddInvoice<AddInvoiceCaptureModel> {
     async add (param: AddInvoiceCaptureModel): Promise<number> {
@@ -91,7 +39,7 @@ const makeAddInvoiceCaptureStub = (): AddInvoice<AddInvoiceCaptureModel> => {
 const makeGetProcessByIdStub = (): GetProcess => {
   class GetProcessById implements GetProcess {
     async get (id: number): Promise<ProcessModel> {
-      return Promise.resolve(makeFakeProcessData())
+      return Promise.resolve(fakeModel.makeFakeProcess())
     }
   }
   return new GetProcessById()
@@ -100,7 +48,7 @@ const makeGetProcessByIdStub = (): GetProcess => {
 const makeGetCaptureByIdStub = (): GetCapture => {
   class GetCaptureById implements GetCapture {
     async get (id: number): Promise<CaptureModel> {
-      return Promise.resolve(makeFakeCaptureModel())
+      return Promise.resolve(fakeModel.makeFakeCapture())
     }
   }
   return new GetCaptureById()
@@ -109,7 +57,7 @@ const makeGetCaptureByIdStub = (): GetCapture => {
 const makeGetProposalByIdStub = (): GetProposal => {
   class GetProposalById implements GetProposal<number> {
     async get (id: number): Promise<ProposalModel> {
-      return Promise.resolve(makeFakeProposalData())
+      return Promise.resolve(fakeModel.makeFakeProposal())
     }
   }
   return new GetProposalById()
@@ -118,7 +66,7 @@ const makeGetProposalByIdStub = (): GetProposal => {
 const makeGetPersonByIdStub = (): GetPerson => {
   class GetPessoaById implements GetPerson<number> {
     async get (id: number): Promise<PessoaModel> {
-      return Promise.resolve(makeFakePersonModel())
+      return Promise.resolve(fakeModel.makeFakePerson())
     }
   }
   return new GetPessoaById()
@@ -190,7 +138,7 @@ describe('Create Invoice Capture', () => {
 
   test('Ensure CreateInvoiceCapture throws if GetProposalById returns null value', async () => {
     const { sut, getProposal } = makeSut()
-    const error = new RecordNotFound(`proposal id:${makeFakeCaptureModel().id_proposta} not found`)
+    const error = new RecordNotFound(`proposal id:${fakeModel.makeFakeCapture().id_proposta} not found`)
     jest.spyOn(getProposal, 'get').mockImplementationOnce(async (): Promise<any> => {
       return null
     })
@@ -208,7 +156,7 @@ describe('Create Invoice Capture', () => {
 
   test('Ensure CreateInvoiceCapture throws if GetPessoaById returns null value', async () => {
     const { sut, getPerson } = makeSut()
-    const error = new RecordNotFound(`costumer id:${makeFakePersonModel().id_individuo} not found`)
+    const error = new RecordNotFound(`costumer id:${fakeModel.makeFakePerson().id_individuo} not found`)
     jest.spyOn(getPerson, 'get').mockImplementationOnce(async (): Promise<any> => {
       return null
     })
