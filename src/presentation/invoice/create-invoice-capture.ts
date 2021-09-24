@@ -1,32 +1,27 @@
 import { CreateInvoice } from '../../../domain/fatura/create-invoice'
 import { InvoiceModel } from '../../../domain/fatura/models/invoice-model'
-import { AddInvoice } from '../../../domain/fatura/add-invoice'
-import { AddInvoiceCaptureModel } from '../../dataprovider/model/add-invoice-capture-model'
-import { GetProcess } from '../protocols/get-processo'
-import { RecordNotFound } from '../../presentation/error/record-not-found'
-import { GetCapture } from '../protocols/get-capture'
+import { GetProcess } from '../../usercases/protocols/get-processo'
+import { RecordNotFound } from '../error/record-not-found'
+import { GetCapture } from '../../usercases/protocols/get-capture'
 import { GetProposal } from '../../../domain/propostal/get-proposal'
-import { GetPessoa } from '../../../domain/pessoa/get-pessoa'
+import { GetPerson } from '../../../domain/pessoa/get-pessoa'
 
 export class CreateInvoiceCapture implements CreateInvoice {
-  private readonly addInvoice: AddInvoice<AddInvoiceCaptureModel>
   private readonly getProcess: GetProcess
   private readonly getCapture: GetCapture
   private readonly getProposal: GetProposal
-  private readonly getPessoa: GetPessoa
+  private readonly getPerson: GetPerson
 
   constructor (
-    addInvoice: AddInvoice<AddInvoiceCaptureModel>,
     getProcess: GetProcess,
     getCapture: GetCapture,
     getProposal: GetProposal,
-    getPessoa: GetPessoa
+    getPerson: GetPerson
   ) {
-    this.addInvoice = addInvoice
     this.getProcess = getProcess
     this.getCapture = getCapture
     this.getProposal = getProposal
-    this.getPessoa = getPessoa
+    this.getPerson = getPerson
   }
 
   async create (id: number): Promise<InvoiceModel> {
@@ -45,12 +40,12 @@ export class CreateInvoiceCapture implements CreateInvoice {
       throw new RecordNotFound(`proposal id:${capture.id_proposta} not found`)
     }
 
-    const costumer = await this.getPessoa.get(proposal.id_cliente)
+    const costumer = await this.getPerson.get(proposal.id_cliente)
     if (!costumer) {
       throw new RecordNotFound(`costumer id:${proposal.id_cliente} not found`)
     }
 
-    const cargoAgent = await this.getPessoa.get(capture.id_agentecarga)
+    const cargoAgent = await this.getPerson.get(capture.id_agentecarga)
     if (!cargoAgent) {
       throw new RecordNotFound(`cargo agente id:${proposal.id_cliente} not found`)
     }

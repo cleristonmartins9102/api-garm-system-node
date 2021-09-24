@@ -1,5 +1,5 @@
 import { PessoaModel } from './model/pessoa-mode'
 
-export interface GetPessoa<T = any> {
+export interface GetPerson<T = any> {
   get (value: T): Promise<PessoaModel>
 }

@@ -4,28 +4,26 @@ import { AddInvoiceCaptureModel } from '../../dataprovider/model/add-invoice-cap
 import { CreateInvoiceCapture } from './create-invoice-capture'
 import { InvoiceItemOperationModel } from '../../dataprovider/model/invoice-item-operation-model '
 import { ValidationComposite } from '../../../../../../Courses/node/src/presentation/helpers/validations/validation-composite'
-import { RequiredField } from '../../presentation/helper/validators/validations/required-field/required-field'
-import { Validation } from '../../presentation/protocols/validation'
+import { RequiredField } from '../helper/validators/validations/required-field/required-field'
+import { Validation } from '../protocols/validation'
 import { makeValidator } from '../../dataprovider/invoice/factor/addInvoice/validator'
-import { GetProcess } from '../protocols/get-processo'
+import { GetProcess } from '../../usercases/protocols/get-processo'
 import { ProcessModel } from '../../../domain/processo/model/process'
-import { RecordNotFound } from '../../presentation/error/record-not-found'
-import { GetCapture } from '../protocols/get-capture'
+import { RecordNotFound } from '../error/record-not-found'
+import { GetCapture } from '../../usercases/protocols/get-capture'
 import { CaptureModel } from '../../../domain/capture/model/capture'
 import { GetProposal } from '../../../domain/propostal/get-proposal'
 import { ProposalModel } from '../../../domain/propostal/model/proposal'
 import { PessoaModel } from '../../../domain/pessoa/model/pessoa-mode'
-import { GetPessoa } from '../../../domain/pessoa/get-pessoa'
+import { GetPerson } from '../../../domain/pessoa/get-pessoa'
 
 type SutTypes = {
   sut: CreateInvoice
-  // addInvoiceItem: AddItem
-  addInvoice: AddInvoice<AddInvoiceCaptureModel>
   validator: Validation
   getProcess: GetProcess
   getCapture: GetCapture
   getProposal: GetProposal
-  getPessoa: GetPessoa
+  getPerson: GetPerson
 }
 
 const processNumber: number = 1
@@ -53,7 +51,7 @@ const makeFakeCaptureModel = (): CaptureModel => (
   }
 )
 
-const makeFakePessoaModel = (): PessoaModel => ({
+const makeFakePersonModel = (): PessoaModel => ({
   id_individuo: 2222,
   id_endereco: 33444,
   identificador: 2222,
@@ -117,31 +115,29 @@ const makeGetProposalByIdStub = (): GetProposal => {
   return new GetProposalById()
 }
 
-const makeGetPessoaByIdStub = (): GetPessoa => {
-  class GetPessoaById implements GetPessoa<number> {
+const makeGetPersonByIdStub = (): GetPerson => {
+  class GetPessoaById implements GetPerson<number> {
     async get (id: number): Promise<PessoaModel> {
-      return Promise.resolve(makeFakePessoaModel())
+      return Promise.resolve(makeFakePersonModel())
     }
   }
   return new GetPessoaById()
 }
 
 const makeSut = (): SutTypes => {
-  const addInvoice = makeAddInvoiceCaptureStub()
   const getProposal = makeGetProposalByIdStub()
   const validator = makeValidator()
   const getProcess = makeGetProcessByIdStub()
   const getCapture = makeGetCaptureByIdStub()
-  const getPessoa = makeGetPessoaByIdStub()
-  const sut = new CreateInvoiceCapture(addInvoice, getProcess, getCapture, getProposal, getPessoa)
+  const getPerson = makeGetPersonByIdStub()
+  const sut = new CreateInvoiceCapture(getProcess, getCapture, getProposal, getPerson)
   return {
     sut,
-    addInvoice,
     getProcess,
     getCapture,
     validator,
     getProposal,
-    getPessoa
+    getPerson
   }
 }
 
@@ -202,8 +198,8 @@ describe('Create Invoice Capture', () => {
   })
 
   test('Ensure call GetPessoaById with correct value', async () => {
-    const { sut, getPessoa, getProposal } = makeSut()
-    const getPessoaSpy = jest.spyOn(getPessoa, 'get')
+    const { sut, getPerson, getProposal } = makeSut()
+    const getPessoaSpy = jest.spyOn(getPerson, 'get')
     const getProposalSpy = jest.spyOn(getProposal, 'get')
     await sut.create(processNumber)
     const idCliente = await getProposalSpy.mock.results[0].value
@@ -211,17 +207,17 @@ describe('Create Invoice Capture', () => {
   })
 
   test('Ensure CreateInvoiceCapture throws if GetPessoaById returns null value', async () => {
-    const { sut, getPessoa } = makeSut()
-    const error = new RecordNotFound(`costumer id:${makeFakePessoaModel().id_individuo} not found`)
-    jest.spyOn(getPessoa, 'get').mockImplementationOnce(async (): Promise<any> => {
+    const { sut, getPerson } = makeSut()
+    const error = new RecordNotFound(`costumer id:${makeFakePersonModel().id_individuo} not found`)
+    jest.spyOn(getPerson, 'get').mockImplementationOnce(async (): Promise<any> => {
       return null
     })
     await expect(sut.create(processNumber)).rejects.toThrow(error)
   })
 
   test('Ensure call GetPessoaById for get Cargo Agent with correct value', async () => {
-    const { sut, getPessoa, getCapture } = makeSut()
-    const getPessoaSpy = jest.spyOn(getPessoa, 'get')
+    const { sut, getPerson, getCapture } = makeSut()
+    const getPessoaSpy = jest.spyOn(getPerson, 'get')
     const getCaptureSpy = jest.spyOn(getCapture, 'get')
     await sut.create(processNumber)
     const capture = await getCaptureSpy.mock.results[0].value
@@ -258,12 +254,5 @@ describe('Create Invoice Capture', () => {
       throw new Error()
     })
     await expect(sut.create(processNumber)).rejects.toThrow()
-  })
-
-  test('Ensure CreateInvoiceCapture calls AddInvoiceCapture with correct value', async () => {
-    const { sut, addInvoice } = makeSut()
-    const addInvoiceSpy = jest.spyOn(addInvoice, 'add')
-    await sut.create(processNumber)
-    expect(addInvoiceSpy)
   })
 })
