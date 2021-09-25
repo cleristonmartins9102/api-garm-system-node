@@ -10,6 +10,7 @@ import { fakeModel } from '../test/make-model'
 import { stub } from '../test/make-stubs'
 import { CreateInvoiceBuild } from './builder/build/create-invoice'
 import { createModelToAddInvoice } from './helper/create-add-invoice-capture-model'
+import { DirectorCreatorInvoiceStub } from './builder/director/director-create-invoice'
 
 type SutTypes = {
   sut: CreateInvoice
@@ -41,6 +42,7 @@ const makeSut = (): SutTypes => {
 }
 
 jest.mock('./builder/build/create-invoice')
+jest.mock('./builder/director/director-create-invoice')
 // jest.mock('./helper/create-add-invoice-capture-model')
 
 describe('Create Invoice Capture', () => {
@@ -126,10 +128,17 @@ describe('Create Invoice Capture', () => {
     expect(getPessoaSpy.mock.calls[1][0]).toBe(capture.id_agentecarga)
   })
 
-  test('Ensure call Builder with correct value', async () => {
+  test('Ensure CreateInvoiceCapture calls Builder with correct value', async () => {
     const { sut } = makeSut()
     await sut.create(processNumber)
     expect(CreateInvoiceBuild).toBeCalledWith(fakeModel.makeFakeAddInvoice())
+  })
+
+  test('Ensure CreateInvoiceCapture calls Director with correct value', async () => {
+    const { sut } = makeSut()
+    await sut.create(processNumber)
+    const mockCall = (CreateInvoiceBuild as any).mock.instances[0]
+    expect(DirectorCreatorInvoiceStub).toBeCalledWith(mockCall)
   })
 
   test('Ensure CreateInvoiceCapture throw if is error', async () => {
