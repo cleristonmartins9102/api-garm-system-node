@@ -8,6 +8,8 @@ import { RecordNotFound } from '../error/record-not-found'
 import { GetCapture } from '../../usercases/protocols/get-capture'
 import { fakeModel } from '../test/make-model'
 import { stub } from '../test/make-stubs'
+import { CreateInvoiceBuild } from './builder/build/create-invoice'
+import { createModelToAddInvoice } from './helper/create-add-invoice-capture-model'
 
 type SutTypes = {
   sut: CreateInvoice
@@ -22,6 +24,7 @@ const processNumber: number = 1
 
 const makeSut = (): SutTypes => {
   const getProposal = stub.makeGetProposalByIdStub()
+  // const directorInvoice = stub.makeDirectorCreatorInvoiceStub()
   const validator = makeValidator()
   const getProcess = stub.makeGetProcessByIdStub()
   const getCapture = stub.makeGetCaptureByIdStub()
@@ -36,6 +39,9 @@ const makeSut = (): SutTypes => {
     getPerson
   }
 }
+
+jest.mock('./builder/build/create-invoice')
+// jest.mock('./helper/create-add-invoice-capture-model')
 
 describe('Create Invoice Capture', () => {
   afterEach(() => {
@@ -118,6 +124,12 @@ describe('Create Invoice Capture', () => {
     await sut.create(processNumber)
     const capture = await getCaptureSpy.mock.results[0].value
     expect(getPessoaSpy.mock.calls[1][0]).toBe(capture.id_agentecarga)
+  })
+
+  test('Ensure call Builder with correct value', async () => {
+    const { sut } = makeSut()
+    await sut.create(processNumber)
+    expect(CreateInvoiceBuild).toBeCalledWith(fakeModel.makeFakeAddInvoice())
   })
 
   test('Ensure CreateInvoiceCapture throw if is error', async () => {

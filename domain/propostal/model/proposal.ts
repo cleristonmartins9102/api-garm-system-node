@@ -1,7 +1,7 @@
 import { DefaultRecords } from '../../models/default-records'
 
 export interface ProposalModel extends DefaultRecords {
-  id_cliente: string
+  id_cliente: number
   id_vendedor: number
   id_qualificacao: number
   id_coadjuvante: number

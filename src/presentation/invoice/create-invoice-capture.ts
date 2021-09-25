@@ -2,6 +2,9 @@ import { GetProcess, GetCapture, GetPerson, GetProposal } from '../../usercases/
 import { CreateInvoice } from '../../../domain/fatura/create-invoice'
 import { InvoiceModel } from '../../../domain/fatura/models/invoice-model'
 import { RecordNotFound } from '../error/record-not-found'
+import { DirectorCreatorInvoiceStub } from './builder/director/director-create-invoice'
+import { CreateInvoiceBuild } from './builder/build/create-invoice'
+import { createModelToAddInvoice } from './helper/create-add-invoice-capture-model'
 
 export class CreateInvoiceCapture implements CreateInvoice {
   private readonly getProcess: GetProcess
@@ -46,6 +49,11 @@ export class CreateInvoiceCapture implements CreateInvoice {
     if (!cargoAgent) {
       throw new RecordNotFound(`cargo agente id:${proposal.id_cliente} not found`)
     }
+
+    const addInvoiceModel = createModelToAddInvoice(process, proposal, capture)
+
+    const builder = new CreateInvoiceBuild(addInvoiceModel)
+    const director = new DirectorCreatorInvoiceStub(builder)
 
     // await this.addInvoice.add(process)
     return Promise.resolve({ id_fatura: 1, numero: 2 })

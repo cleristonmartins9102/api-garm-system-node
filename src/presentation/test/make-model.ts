@@ -1,18 +1,19 @@
 import { CaptureModel, PersonModel, ProcessModel, ProposalModel } from '../../../domain/models'
-import { AddInvoiceCaptureModel } from '../../dataprovider/model/add-invoice-capture-model'
+import { AddInvoiceCaptureModel } from '../../dataprovider/invoice/models'
+import { dateNow } from '../utils'
 
-const makeFakeInvoice = (): AddInvoiceCaptureModel => ({
-  id_faturamodelo: 1,
+const makeFakeAddInvoice = (): AddInvoiceCaptureModel => ({
+  id_faturamodelo: 2,
   id_faturastatus: 1,
   id_processo: 1,
-  id_cliente: 1,
-  id_agentecarga: 2,
+  id_cliente: makeFakeProposal().id_cliente,
+  id_agentecarga: makeFakeCapture().id_agentecarga,
   valor: 100,
-  valor_custo: 150,
-  valor_lucro: 200,
-  valor_imposto_interno: 233,
-  dta_emissao: '28/12/2020',
-  dta_vencimento: '30/12/2020',
+  valor_custo: 33,
+  valor_lucro: 10,
+  valor_imposto_interno: 20,
+  dta_emissao: dateNow,
+  dta_vencimento: '21-12-2021',
   nf: 3333
 })
 
@@ -34,7 +35,7 @@ const makeFakePerson = (): PersonModel => ({
 })
 
 const makeFakeProposal = (): ProposalModel => ({
-  id_cliente: '2222',
+  id_cliente: 2222,
   id_coadjuvante: 22222,
   id_qualificacao: 4444,
   id_regime: 3333,
@@ -57,5 +58,5 @@ export const fakeModel = {
   makeFakeProposal,
   makeFakePerson,
   makeFakeCapture,
-  makeFakeInvoice
+  makeFakeAddInvoice
 }

@@ -1,8 +1,10 @@
 import { AddInvoice } from '../../../domain/fatura/add-invoice'
 import { CaptureModel, PersonModel, ProcessModel, ProposalModel } from '../../../domain/models'
-import { AddInvoiceCaptureModel } from '../../dataprovider/model/add-invoice-capture-model'
+import { AddInvoiceCaptureModel } from '../../dataprovider/invoice/models/add-invoice-capture-model'
 import { GetPerson, GetProposal, GetCapture, GetProcess } from '../../usercases/protocols'
 import { fakeModel } from './make-model'
+import { DirectorCreateInvoice } from '../invoice/protocols/director-creator-invoice'
+import { CreateInvoiceBuilder } from '../invoice/protocols'
 
 const makeGetCaptureByIdStub = (): GetCapture => {
   class GetCaptureById implements GetCapture {
@@ -49,10 +51,41 @@ const makeAddInvoiceCaptureStub = (): AddInvoice<AddInvoiceCaptureModel> => {
   return new AddInvoiceCaptureStub()
 }
 
+const makeDirectorCreatorInvoiceStub = (builder: CreateInvoiceBuilder): DirectorCreateInvoice => {
+  class DirectorCreatorInvoiceStub implements DirectorCreateInvoice<CreateInvoiceBuilder> {
+    private readonly builder: CreateInvoiceBuilder
+    constructor (builder: CreateInvoiceBuilder) {
+      this.builder = builder
+    }
+
+    async create (): Promise<CreateInvoiceBuilder> {
+      return null as any
+    }
+  }
+  return new DirectorCreatorInvoiceStub(builder)
+}
+
+const makeCreatorInvoiceBuilderStub = <T>(): CreateInvoiceBuilder => {
+  class CreatorInvoiceBuilderStub<T> implements CreateInvoiceBuilder<T> {
+    async calculateItems (): Promise<T> {
+      return null as any
+    }
+
+    async saveItems (): Promise<T> {
+      return null as any
+    }
+
+    getItems (): any {}
+  }
+  return new CreatorInvoiceBuilderStub()
+}
+
 export const stub = {
   makeGetPersonByIdStub,
   makeGetProposalByIdStub,
   makeGetCaptureByIdStub,
   makeGetProcessByIdStub,
-  makeAddInvoiceCaptureStub
+  makeAddInvoiceCaptureStub,
+  makeDirectorCreatorInvoiceStub,
+  makeCreatorInvoiceBuilderStub
 }
