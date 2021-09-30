@@ -4,7 +4,8 @@ import { AddInvoiceCaptureModel } from '../../dataprovider/invoice/models/add-in
 import { GetPerson, GetProposal, GetCapture, GetProcess } from '../../usercases/protocols'
 import { fakeModel } from './make-model'
 import { DirectorCreateInvoice } from '../invoice/protocols/director-creator-invoice'
-import { CreateInvoiceBuilder } from '../invoice/protocols'
+import { InvoiceBuild } from '../invoice/protocols'
+import { InvoiceModel } from '../../../domain/fatura/models/invoice-model'
 
 const makeGetCaptureByIdStub = (): GetCapture => {
   class GetCaptureById implements GetCapture {
@@ -51,22 +52,22 @@ const makeAddInvoiceCaptureStub = (): AddInvoice<AddInvoiceCaptureModel> => {
   return new AddInvoiceCaptureStub()
 }
 
-const makeDirectorCreatorInvoiceStub = (builder: CreateInvoiceBuilder): DirectorCreateInvoice => {
-  class DirectorCreatorInvoiceStub implements DirectorCreateInvoice<CreateInvoiceBuilder> {
-    private readonly builder: CreateInvoiceBuilder
-    constructor (builder: CreateInvoiceBuilder) {
+const makeDirectorCreatorInvoiceStub = (builder: InvoiceBuild): DirectorCreateInvoice => {
+  class DirectorCreatorInvoiceStub implements DirectorCreateInvoice<InvoiceBuild> {
+    private readonly builder: InvoiceBuild
+    constructor (builder: InvoiceBuild) {
       this.builder = builder
     }
 
-    async create (): Promise<CreateInvoiceBuilder> {
+    async create (): Promise<InvoiceBuild> {
       return null as any
     }
   }
   return new DirectorCreatorInvoiceStub(builder)
 }
 
-const makeCreatorInvoiceBuilderStub = <T>(): CreateInvoiceBuilder => {
-  class CreatorInvoiceBuilderStub<T> implements CreateInvoiceBuilder<T> {
+const makeCreatorInvoiceBuilderStub = <T>(): InvoiceBuild => {
+  class InvoiceBuilderStub<T> implements InvoiceBuild<T> {
     async calculateItems (): Promise<T> {
       return null as any
     }
@@ -75,9 +76,15 @@ const makeCreatorInvoiceBuilderStub = <T>(): CreateInvoiceBuilder => {
       return null as any
     }
 
-    getItems (): any {}
+    async build (): Promise<InvoiceModel> {
+      return fakeModel.makeFakeInvoice()
+    }
+
+    getInvoice (): InvoiceModel {
+      return fakeModel.makeFakeInvoice()
+    }
   }
-  return new CreatorInvoiceBuilderStub()
+  return new InvoiceBuilderStub()
 }
 
 export const stub = {

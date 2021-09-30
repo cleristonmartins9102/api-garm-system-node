@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand --no-cache",
+    "test": "jest --passWithNoTests --noStackTrace --runInBand --no-cache",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:unit": "npm test -- --watch",
     "test:staged": "npm test -- --findRelatedTests",
@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/preset-env": "^7.15.6",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.7.9",
     "@typescript-eslint/eslint-plugin": "^4.30.0",

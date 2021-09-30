@@ -1,12 +1,16 @@
-import { CreateInvoiceBuilder, DirectorCreateInvoice } from '../../protocols'
+import { InvoiceModel } from '../../../../../domain/fatura/models/invoice-model'
+import { InvoiceBuild, DirectorCreateInvoice } from '../../protocols'
 
-export class DirectorCreatorInvoiceStub implements DirectorCreateInvoice<CreateInvoiceBuilder> {
-  private readonly builder: CreateInvoiceBuilder
-  constructor (builder: CreateInvoiceBuilder) {
+export class DirectorCreatorInvoice implements DirectorCreateInvoice<InvoiceModel> {
+  private readonly builder: InvoiceBuild
+  constructor (builder: InvoiceBuild) {
     this.builder = builder
   }
 
-  async create (): Promise<CreateInvoiceBuilder> {
-    return null as any
+  async create (): Promise<InvoiceModel> {
+    console.log(2)
+    return Promise.resolve('resolved') as any
+    // await this.builder.build()
+    // return 111 as any
   }
 }

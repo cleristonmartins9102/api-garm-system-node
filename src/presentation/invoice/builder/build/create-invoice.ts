@@ -1,7 +1,8 @@
+import { InvoiceModel } from '../../../../../domain/fatura/models/invoice-model'
 import { AddInvoiceCaptureModel } from '../../../../dataprovider/invoice/models'
-import { CreateInvoiceBuilder } from '../../protocols'
+import { InvoiceBuild } from '../../protocols'
 
-export class CreateInvoiceBuild implements CreateInvoiceBuilder {
+export default class InvoiceBuilder implements InvoiceBuild {
   private readonly processModel: AddInvoiceCaptureModel
 
   constructor (processModel: AddInvoiceCaptureModel) {
@@ -16,5 +17,11 @@ export class CreateInvoiceBuild implements CreateInvoiceBuilder {
     return null as any
   }
 
-  getItems (): any {}
+  build (): void {
+  }
+
+  getInvoice (): InvoiceModel {
+    return null as any
+    // return null as any
+  }
 }
