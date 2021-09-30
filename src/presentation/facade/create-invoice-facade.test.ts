@@ -2,6 +2,7 @@ import { CreateInvoiceFacade } from './create-invoice-facade'
 import { GetOperationType } from '../../usercases/protocols/get-operation-type'
 import { ProcessModel } from '../../../domain/processo/model/process'
 import { GetItem } from '../../../domain/get-item'
+import { fakeModel } from '../test/make-model'
 
 type SutTypes = {
   sut: CreateInvoiceFacade
@@ -20,7 +21,7 @@ const makeGetOperationTypeStub = (): GetOperationType => {
 const makeGetItemProcess = (): GetItem<ProcessModel> => {
   class GetProcessItemStub implements GetItem<ProcessModel> {
     async get (id: number): Promise<ProcessModel> {
-      return Promise.resolve({ id_processo: 1, numero: 3 })
+      return Promise.resolve(fakeModel.makeFakeProcess())
     }
   }
   return new GetProcessItemStub()

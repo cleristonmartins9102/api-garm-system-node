@@ -8,6 +8,7 @@ import { RequiredField } from '../helper/validators/validations/required-field/r
 import { ValidationComposite } from '../helper/validators/validation-composite'
 import { Validation } from '../protocols/validation'
 import { InvalidParamError } from '../../../../../../Courses/node/src/presentation/erros/invalid-param-error'
+import { fakeModel } from '../test/make-model'
 
 type SutTypes = {
   sut: Controller
@@ -38,15 +39,10 @@ const makeSut = (): any => {
   }
 }
 
-const makeFakeFatura = (): InvoiceModel => ({
-  id_fatura: 1,
-  numero: 1
-})
-
 const makeFakeFacade = (): any => {
   class FacadeCreateFaturaStub implements CreateInvoice {
     async create (): Promise<InvoiceModel> {
-      return makeFakeFatura()
+      return fakeModel.makeFakeInvoice()
     }
   }
   return new FacadeCreateFaturaStub()
@@ -92,6 +88,6 @@ describe('Test Create Fatura', () => {
   test('Should ensure return 200 on success', async () => {
     const { sut } = makeSut()
     const response = await sut.handle(makeFakeHttpRequest())
-    expect(response).toEqual(ok(makeFakeFatura()))
+    expect(response).toEqual(ok(fakeModel.makeFakeInvoice()))
   })
 })

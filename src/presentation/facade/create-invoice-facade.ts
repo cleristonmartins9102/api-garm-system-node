@@ -1,6 +1,7 @@
 import { CreateInvoice } from '../../../domain/fatura/create-invoice'
 import { InvoiceModel } from '../../../domain/fatura/models/invoice-model'
 import { GetOperationType } from '../../usercases/protocols/get-operation-type'
+import { fakeModel } from '../test/make-model'
 
 export class CreateInvoiceFacade implements CreateInvoice {
   private readonly getOperationType: GetOperationType
@@ -11,6 +12,6 @@ export class CreateInvoiceFacade implements CreateInvoice {
 
   async create (id: number): Promise<InvoiceModel> {
     const operationType = this.getOperationType.get(id)
-    return Promise.resolve({ id_fatura: 1, numero: 2 })
+    return Promise.resolve(fakeModel.makeFakeInvoice())
   }
 }

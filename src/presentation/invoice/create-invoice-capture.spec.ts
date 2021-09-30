@@ -252,7 +252,6 @@ describe('Create Invoice Capture', () => {
         }
       }
     })
-    const invoice = await sut.create(processNumber)
-    expect(invoice).toEqual(fakeModel.makeFakeInvoice())
+    await expect(sut.create(processNumber)).resolves.toEqual(fakeModel.makeFakeInvoice())
   })
 })
