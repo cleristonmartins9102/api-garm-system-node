@@ -3,8 +3,8 @@ import { CaptureModel, PersonModel, ProcessModel, ProposalModel } from '../../..
 import { AddInvoiceCaptureModel } from '../../dataprovider/invoice/models/add-invoice-capture-model'
 import { GetPerson, GetProposal, GetCapture, GetProcess } from '../../usercases/protocols'
 import { fakeModel } from './make-model'
-import { DirectorCreateInvoice } from '../invoice/protocols/director-creator-invoice'
-import { InvoiceBuild } from '../invoice/protocols'
+import { DirectorCreateInvoice } from '../../infra/invoice/protocols/director-creator-invoice'
+import { InvoiceBuild } from '../../infra/invoice/protocols'
 import { InvoiceModel } from '../../../domain/fatura/models/invoice-model'
 
 const makeGetCaptureByIdStub = (): GetCapture => {
