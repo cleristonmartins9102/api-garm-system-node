@@ -1,5 +1,0 @@
-export * from '../protocols/get-capture'
-export * from '../protocols/get-operation-type'
-export * from '../protocols/get-process'
-export * from '../protocols/get-proposal'
-export * from '../protocols/get-person'

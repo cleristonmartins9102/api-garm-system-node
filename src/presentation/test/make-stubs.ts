@@ -1,7 +1,7 @@
 import { AddInvoice } from '../../../domain/fatura/add-invoice'
 import { CaptureModel, PersonModel, ProcessModel, ProposalModel } from '../../../domain/models'
 import { AddInvoiceCaptureModel } from '../../dataprovider/invoice/models/add-invoice-capture-model'
-import { GetPerson, GetProposal, GetCapture, GetProcess } from '../../usercases/protocols'
+import { GetPerson, GetProposal, GetCapture, GetProcess } from '../../application/protocols'
 import { fakeModel } from './make-model'
 import { DirectorCreateInvoice } from '../../infra/invoice/protocols/director-creator-invoice'
 import { InvoiceBuild } from '../../infra/invoice/protocols'

@@ -1,4 +1,4 @@
-import { GetProcess, GetCapture, GetPerson, GetProposal } from '../../usercases/protocols'
+import { GetProcess, GetCapture, GetPerson, GetProposal } from '../../application/protocols'
 import { CreateInvoice } from '../../../domain/fatura/create-invoice'
 import { InvoiceModel } from '../../../domain/fatura/models/invoice-model'
 import { RecordNotFound } from '../../presentation/error/record-not-found'
