@@ -8,9 +8,11 @@ import { RecordNotFound } from '../error/record-not-found'
 import { GetCapture } from '../../usercases/protocols/get-capture'
 import { fakeModel } from '../test/make-model'
 import { stub } from '../test/make-stubs'
-import { CreateInvoiceBuild } from './builder/build/create-invoice'
 import { createModelToAddInvoice } from './helper/create-add-invoice-capture-model'
-import { DirectorCreatorInvoiceStub } from './builder/director/director-create-invoice'
+import { DirectorCreatorInvoice } from './builder/director/director-create-invoice'
+import { InvoiceModel } from '../../../domain/fatura/models/invoice-model'
+import InvoiceBuilder from './builder/build/create-invoice'
+import { InvoiceBuild } from './protocols'
 
 type SutTypes = {
   sut: CreateInvoice
@@ -41,14 +43,24 @@ const makeSut = (): SutTypes => {
   }
 }
 
-jest.mock('./builder/build/create-invoice')
 jest.mock('./builder/director/director-create-invoice')
-// jest.mock('./helper/create-add-invoice-capture-model')
+jest.mock('./builder/build/create-invoice')
+jest.mock('./helper/create-add-invoice-capture-model', () => {
+  return {
+    createModelToAddInvoice: jest.fn(() => {
+      return fakeModel.makeFakeAddInvoice()
+    })
+  }
+})
 
 describe('Create Invoice Capture', () => {
   afterEach(() => {
-    jest.clearAllMocks()
+    const mockInvoiceBuilder = InvoiceBuilder as any
+    const mockDirector = DirectorCreatorInvoice as any
+    mockInvoiceBuilder.mockClear()
+    mockDirector.mockClear()
   })
+
   test('Ensure call GetProcessById with correct value', async () => {
     const { sut, getProcess } = makeSut()
     const getProcessSpy = jest.spyOn(getProcess, 'get')
@@ -131,14 +143,14 @@ describe('Create Invoice Capture', () => {
   test('Ensure CreateInvoiceCapture calls Builder with correct value', async () => {
     const { sut } = makeSut()
     await sut.create(processNumber)
-    expect(CreateInvoiceBuild).toBeCalledWith(fakeModel.makeFakeAddInvoice())
+    expect(InvoiceBuilder).toBeCalledWith(fakeModel.makeFakeAddInvoice())
   })
 
   test('Ensure CreateInvoiceCapture calls Director with correct value', async () => {
     const { sut } = makeSut()
     await sut.create(processNumber)
-    const mockCall = (CreateInvoiceBuild as any).mock.instances[0]
-    expect(DirectorCreatorInvoiceStub).toBeCalledWith(mockCall)
+    const mockCall = (InvoiceBuilder as any).mock.instances[0]
+    expect(DirectorCreatorInvoice).toBeCalledWith(mockCall)
   })
 
   test('Ensure CreateInvoiceCapture throw if is error', async () => {
@@ -171,5 +183,76 @@ describe('Create Invoice Capture', () => {
       throw new Error()
     })
     await expect(sut.create(processNumber)).rejects.toThrow()
+  })
+
+  test('Ensure CreateInvoiceCapture throw if createModelToAddInvoice throws', async () => {
+    const { sut } = makeSut()
+    const mockcreateModelToAddInvoice = createModelToAddInvoice as any
+    mockcreateModelToAddInvoice.mockImplementationOnce(() => {
+      throw new Error()
+    })
+    await expect(sut.create(processNumber)).rejects.toThrow()
+  })
+
+  test('Ensure CreateInvoiceCapture throw if Builder throws', async () => {
+    const { sut } = makeSut()
+    const mock = InvoiceBuilder as any
+    const mockDirectorCreatorInvoice = DirectorCreatorInvoice as any
+    mockDirectorCreatorInvoice.mockImplementationOnce(() => {
+      return {
+        create: async function () {
+          const build: InvoiceBuild = mockDirectorCreatorInvoice.mock.calls[0]
+          await build.build()
+        }
+      }
+    })
+    mock.mockImplementation(() => {
+      return {
+        build: () => {
+          throw new Error('Test error')
+        }
+      }
+    })
+    await expect(sut.create(processNumber)).rejects.toThrow()
+  })
+
+  test('Ensure CreateInvoiceCapture throw if Director throws', async () => {
+    const { sut } = makeSut()
+    const mockDirectorCreatorInvoice = DirectorCreatorInvoice as any
+    mockDirectorCreatorInvoice.mockImplementationOnce(() => {
+      return {
+        create: async function () {
+          throw new Error()
+        }
+      }
+    })
+    await expect(sut.create(processNumber)).rejects.toThrow()
+  })
+
+  test('Ensure CreateInvoiceCapture returns FaturaModel on success', async () => {
+    const { sut } = makeSut()
+    const mock = InvoiceBuilder as any
+    mock.mockImplementationOnce(() => {
+      return {
+        build: function (): void {
+          this.invoice = fakeModel.makeFakeInvoice()
+        },
+        getInvoice: function (): InvoiceModel {
+          return this.invoice
+        }
+      }
+    })
+    const mockDirectorCreatorInvoice = DirectorCreatorInvoice as any
+    mockDirectorCreatorInvoice.mockImplementationOnce(() => {
+      return {
+        create: async function () {
+          const build: InvoiceBuild = mockDirectorCreatorInvoice.mock.calls[0][0]
+          build.build()
+          return Promise.resolve(build.getInvoice())
+        }
+      }
+    })
+    const invoice = await sut.create(processNumber)
+    expect(invoice).toEqual(fakeModel.makeFakeInvoice())
   })
 })
