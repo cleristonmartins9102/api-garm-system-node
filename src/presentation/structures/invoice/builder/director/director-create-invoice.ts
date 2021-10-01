@@ -1,4 +1,4 @@
-import { InvoiceModel } from '../../../../../domain/fatura/models/invoice-model'
+import { InvoiceModel } from '../../../../../../domain/fatura/models/invoice-model'
 import { InvoiceBuild, DirectorCreateInvoice } from '../../protocols'
 
 export class DirectorCreatorInvoice implements DirectorCreateInvoice<InvoiceModel> {

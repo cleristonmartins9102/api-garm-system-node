@@ -1,4 +1,4 @@
-import { InvoiceModel } from '../../../../domain/fatura/models/invoice-model'
+import { InvoiceModel } from '../../../../../domain/fatura/models/invoice-model'
 
 export interface InvoiceBuild<T = any> {
   saveItems (): Promise<T>

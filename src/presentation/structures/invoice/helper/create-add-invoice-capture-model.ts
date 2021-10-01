@@ -1,8 +1,8 @@
-import { CaptureModel } from '../../../../domain/capture/model/capture'
-import { ProposalModel } from '../../../../domain/models'
-import { ProcessModel } from '../../../../domain/processo/model/process'
-import { AddInvoiceCaptureModel } from '../../../dataprovider/invoice/models'
-import { dateNow } from '../../../presentation/utils'
+import { CaptureModel } from '../../../../../domain/capture/model/capture'
+import { ProposalModel } from '../../../../../domain/models'
+import { ProcessModel } from '../../../../../domain/processo/model/process'
+import { AddInvoiceCaptureModel } from '../../../../dataprovider/invoice/models'
+import { dateNow } from '../../../utils'
 
 export const createModelToAddInvoice = (processModel: ProcessModel, proposalModel: ProposalModel, captureModel: CaptureModel): AddInvoiceCaptureModel => {
   const { id_processo, id_captacao } = processModel

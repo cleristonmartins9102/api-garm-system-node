@@ -1,5 +1,5 @@
-import { InvoiceModel } from '../../../../../domain/fatura/models/invoice-model'
-import { AddInvoiceCaptureModel } from '../../../../dataprovider/invoice/models'
+import { InvoiceModel } from '../../../../../../domain/fatura/models/invoice-model'
+import { AddInvoiceCaptureModel } from '../../../../../dataprovider/invoice/models'
 import { InvoiceBuild } from '../../protocols'
 
 export default class InvoiceBuilder implements InvoiceBuild {
