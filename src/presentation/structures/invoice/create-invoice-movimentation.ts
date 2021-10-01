@@ -6,7 +6,7 @@ import { DirectorCreatorInvoice } from './builder/director/director-create-invoi
 import InvoiceBuilder from './builder/build/create-invoice'
 import { createModelToAddInvoice } from './helper/create-add-invoice-capture-model'
 
-export class CreateInvoiceCapture implements CreateInvoice {
+export class CreateInvoiceMovimentation implements CreateInvoice {
   private readonly getProcess: GetProcess
   private readonly getCapture: GetCapture
   private readonly getProposal: GetProposal

@@ -1,7 +1,7 @@
 import { CaptureModel, ProcessModel } from '../../../../domain/models'
 import { GetPerson, GetProposal, GetProcess } from '../../../application/protocols'
 import { CreateInvoice } from '../../../../domain/fatura/create-invoice'
-import { CreateInvoiceCapture } from './create-invoice-capture'
+import { CreateInvoiceMovimentation } from './create-invoice-movimentation'
 import { Validation } from '../../protocols/validation'
 import { makeValidator } from '../../../dataprovider/invoice/factor/addInvoice/validator'
 import { RecordNotFound } from '../../error/record-not-found'
@@ -32,7 +32,7 @@ const makeSut = (): SutTypes => {
   const getProcess = stub.makeGetProcessByIdStub()
   const getCapture = stub.makeGetCaptureByIdStub()
   const getPerson = stub.makeGetPersonByIdStub()
-  const sut = new CreateInvoiceCapture(getProcess, getCapture, getProposal, getPerson)
+  const sut = new CreateInvoiceMovimentation(getProcess, getCapture, getProposal, getPerson)
   return {
     sut,
     getProcess,
@@ -68,7 +68,7 @@ describe('Create Invoice Capture', () => {
     expect(getProcessSpy).toBeCalledWith(processNumber)
   })
 
-  test('Ensure CreateInvoiceCapture trows if GetProcessById returns null value', async () => {
+  test('Ensure CreateInvoiceMovimentation trows if GetProcessById returns null value', async () => {
     const { sut, getProcess } = makeSut()
     jest.spyOn(getProcess, 'get').mockImplementationOnce(async (): Promise<any> => {
       return null
@@ -86,7 +86,7 @@ describe('Create Invoice Capture', () => {
     expect(getCaptureSpy).toBeCalledWith(idCapture)
   })
 
-  test('Ensure CreateInvoiceCapture throws if GetCaptureById returns null value', async () => {
+  test('Ensure CreateInvoiceMovimentation throws if GetCaptureById returns null value', async () => {
     const { sut, getCapture } = makeSut()
     jest.spyOn(getCapture, 'get').mockImplementationOnce(async (): Promise<any> => {
       return null
@@ -104,7 +104,7 @@ describe('Create Invoice Capture', () => {
     expect(getProposalSpy).toBeCalledWith(idProposal)
   })
 
-  test('Ensure CreateInvoiceCapture throws if GetProposalById returns null value', async () => {
+  test('Ensure CreateInvoiceMovimentation throws if GetProposalById returns null value', async () => {
     const { sut, getProposal } = makeSut()
     const error = new RecordNotFound(`proposal id:${fakeModel.makeFakeCapture().id_proposta} not found`)
     jest.spyOn(getProposal, 'get').mockImplementationOnce(async (): Promise<any> => {
@@ -122,7 +122,7 @@ describe('Create Invoice Capture', () => {
     expect(getPessoaSpy).toBeCalledWith(idCliente.id_cliente)
   })
 
-  test('Ensure CreateInvoiceCapture throws if GetPessoaById returns null value', async () => {
+  test('Ensure CreateInvoiceMovimentation throws if GetPessoaById returns null value', async () => {
     const { sut, getPerson } = makeSut()
     const error = new RecordNotFound(`costumer id:${fakeModel.makeFakePerson().id_individuo} not found`)
     jest.spyOn(getPerson, 'get').mockImplementationOnce(async (): Promise<any> => {
@@ -140,20 +140,20 @@ describe('Create Invoice Capture', () => {
     expect(getPessoaSpy.mock.calls[1][0]).toBe(capture.id_agentecarga)
   })
 
-  test('Ensure CreateInvoiceCapture calls Builder with correct value', async () => {
+  test('Ensure CreateInvoiceMovimentation calls Builder with correct value', async () => {
     const { sut } = makeSut()
     await sut.create(processNumber)
     expect(InvoiceBuilder).toBeCalledWith(fakeModel.makeFakeAddInvoice())
   })
 
-  test('Ensure CreateInvoiceCapture calls Director with correct value', async () => {
+  test('Ensure CreateInvoiceMovimentation calls Director with correct value', async () => {
     const { sut } = makeSut()
     await sut.create(processNumber)
     const mockCall = (InvoiceBuilder as any).mock.instances[0]
     expect(DirectorCreatorInvoice).toBeCalledWith(mockCall)
   })
 
-  test('Ensure CreateInvoiceCapture throw if is error', async () => {
+  test('Ensure CreateInvoiceMovimentation throw if is error', async () => {
     const { sut, getCapture } = makeSut()
     jest.spyOn(sut, 'create').mockImplementationOnce(async (id) => {
       throw new Error()
@@ -161,7 +161,7 @@ describe('Create Invoice Capture', () => {
     await expect(sut.create(processNumber)).rejects.toThrow()
   })
 
-  test('Ensure CreateInvoiceCapture throw if GetCapture throws', async () => {
+  test('Ensure CreateInvoiceMovimentation throw if GetCapture throws', async () => {
     const { sut, getCapture } = makeSut()
     jest.spyOn(getCapture, 'get').mockImplementationOnce(async (id) => {
       throw new Error()
@@ -169,7 +169,7 @@ describe('Create Invoice Capture', () => {
     await expect(sut.create(processNumber)).rejects.toThrow()
   })
 
-  test('Ensure CreateInvoiceCapture throw if GetProcess throws', async () => {
+  test('Ensure CreateInvoiceMovimentation throw if GetProcess throws', async () => {
     const { sut, getProcess } = makeSut()
     jest.spyOn(getProcess, 'get').mockImplementationOnce(async (id) => {
       throw new Error()
@@ -177,7 +177,7 @@ describe('Create Invoice Capture', () => {
     await expect(sut.create(processNumber)).rejects.toThrow()
   })
 
-  test('Ensure CreateInvoiceCapture throw if GetProposal throws', async () => {
+  test('Ensure CreateInvoiceMovimentation throw if GetProposal throws', async () => {
     const { sut, getProposal } = makeSut()
     jest.spyOn(getProposal, 'get').mockImplementationOnce(async (id) => {
       throw new Error()
@@ -185,7 +185,7 @@ describe('Create Invoice Capture', () => {
     await expect(sut.create(processNumber)).rejects.toThrow()
   })
 
-  test('Ensure CreateInvoiceCapture throw if createModelToAddInvoice throws', async () => {
+  test('Ensure CreateInvoiceMovimentation throw if createModelToAddInvoice throws', async () => {
     const { sut } = makeSut()
     const mockcreateModelToAddInvoice = createModelToAddInvoice as any
     mockcreateModelToAddInvoice.mockImplementationOnce(() => {
@@ -194,7 +194,7 @@ describe('Create Invoice Capture', () => {
     await expect(sut.create(processNumber)).rejects.toThrow()
   })
 
-  test('Ensure CreateInvoiceCapture throw if Builder throws', async () => {
+  test('Ensure CreateInvoiceMovimentation throw if Builder throws', async () => {
     const { sut } = makeSut()
     const mock = InvoiceBuilder as any
     const mockDirectorCreatorInvoice = DirectorCreatorInvoice as any
@@ -216,7 +216,7 @@ describe('Create Invoice Capture', () => {
     await expect(sut.create(processNumber)).rejects.toThrow()
   })
 
-  test('Ensure CreateInvoiceCapture throw if Director throws', async () => {
+  test('Ensure CreateInvoiceMovimentation throw if Director throws', async () => {
     const { sut } = makeSut()
     const mockDirectorCreatorInvoice = DirectorCreatorInvoice as any
     mockDirectorCreatorInvoice.mockImplementationOnce(() => {
@@ -229,7 +229,7 @@ describe('Create Invoice Capture', () => {
     await expect(sut.create(processNumber)).rejects.toThrow()
   })
 
-  test('Ensure CreateInvoiceCapture returns FaturaModel on success', async () => {
+  test('Ensure CreateInvoiceMovimentation returns FaturaModel on success', async () => {
     const { sut } = makeSut()
     const mock = InvoiceBuilder as any
     mock.mockImplementationOnce(() => {
